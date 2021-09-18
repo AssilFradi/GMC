@@ -1,0 +1,445 @@
+Unsupervised Learning Definition
+===============================
+Unsupervised learning is based on the concept of letting the machine learn the hidden patterns in unlabeled Datasets on it’s own.
+ 
+Supervised vs Unsupervised Data
+==============================
+In a supervised learning problem, we have the corresponding output for each input. That's why we call it labeled data.:
+In unsupervised learning we only have the inputs and no output which means there are no labels and no correct answers. That's why we call it unlabeled data.
+
+Unsupervised Problems
+=====================
+In unsupervised learning, machines explore the unlabeled dataset either to:
+
+Discover the inherent groupings in the data. This process is called Clustering.
+
+Extract rules that describe large portions of your data. This process is called Association Rules.
+
+The difference between supervised and unsupervised learning is that supervised learning works on labeled datasets, 
+unlike unsupervised that explores raw data without any labels.
+
+In unsupervised learning, there are two problems: Clustering and Association rules.
+
+Unsupervised Clustering
+=======================
+The objective of clustering is to find different clusters (groups) within the elements in the data
+
+ in a way that elements of the same cluster are more similar to each other than to those from different clusters.
+
+To further explain this, we can say that a cluster is a group of data points that are grouped together due to similarities in their features.
+
+Clustering Preprocessing
+===========================
+import pandas as pd
+data=pd.read_csv("Mall_Customers.csv")
+
+data=data.drop("CustomerID", axis=1)
+data["Gender"]=data["Gender"].map({"Male":1, "Female":0})  #convert Gender values into numerical
+data
+
+Clustering Types
+=================
+Hierarchical clustering is a method of clustering that seeks to build a hierarchy of clusters.
+
+There exist two types: Divisive and Agglomerative clustering.
+
+Why Pick Hierarchical Clustering?
+=================================
+We may want to use hierarchical clustering when:
+
+We don't know beforehand the number of clusters.
+
+When the underlying data has a hierarchical structure.
+
+We want to visualize how the clusters are made.
+
+Hierarchical Clustering
+=======================
+Hierarchical clustering is a method of clustering that seeks to build a hierarchy of clusters.
+
+There exist two types: Divisive and Agglomerative clustering.
+
+
+Divisive Clustering
+===========================
+Divisive:
+
+all observations start in one cluster.
+
+splits are performed recursively until each observation ends in its own cluster or until K clusters are formed.
+
+Agglomerative Clustering
+========================
+Agglomerative:
+
+
+Each observation starts in its own cluster.
+
+Similar clusters are merged until they form one big cluster or until K clusters are formed A.
+
+In our course, we will study only the Agglomerative method, so let’s start by understanding in detail how it works.
+
+
+Agglomerative Steps
+====================
+Let’s consider all six data points as individual clusters.
+
+We calculate the distance matrix which contains the distance between all the clusters.
+
+Similar clusters are merged together and formed as a single cluster.
+
+We repeat the second and third step until all the clusters are merged and form a single cluster or until K-clusters are formed
+
+But how do we determine the distance between two clusters?
+
+Agglomerative Cluster distance
+===============================
+There exist many methods for determining the distance between two clusters and one of them is the complete-linkage method.
+
+In fact, with this method, the distance between two clusters is defined as the longest distance between two points in each cluster.
+
+Note here that we usually use the euclidean distance to calculate the distance between two points.
+
+Agglomerative Visualization
+==========================
+The main output of Hierarchical Clustering is a Dendrogram.
+
+We can use a dendrogram to:
+
+Capture the hierarchical relationship between the clusters.
+
+Understand how each cluster was made.
+
+Choose the right value of the final K clusters.
+
+Agglomerative Example
+======================
+from sklearn.cluster import AgglomerativeClustering #Importing our clustering algorithm : Agglomerative
+model=AgglomerativeClustering(n_clusters=5, affinity='euclidean', linkage='complete')
+clust_labels=model.fit_predict(data)  #Applying agglomerative algorithm with 5 clusters, using euclidean distance as a metric
+
+Agglomerative cluster plot
+===========================
+Each colored group represents a cluster.
+
+import matplotlib.pyplot as plt
+fig =plt.figure()
+ax = fig.add_subplot(111)
+scatter = ax.scatter (data ['Annual Income (k$)'] , data ["Spending Score (1-100)"] , c= agglomerative[0], s=50)
+ax.set_title("Agglomerative Clutering")
+ax.set_xlabel("Annual Income (k$)")
+ax.set_ylabel("Spending Score (1-100)")
+plt.colorbar(scatter)
+
+One of the multiple ways to perform clustering is by using hierarchical clustering.
+
+In hierarchical clustering, there are two types: divisive and agglomerative.
+
+To visualize how the groups are made we can use a dendrogram.
+
+Partitional Clustering
+========================
+Partitional clustering directly divides data objects into some pre-specified number of clusters without any hierarchical structure so that:
+
+Each group contains at least one point.
+
+Each point belongs to exactly one group.
+
+One of the partitional clustering algorithms is the k-means.
+
+K-means-when?
+=============
+K-Means clustering is best suited when you have a good idea of the number of distinct clusters (groups) your unlabeled dataset should be segmented into.
+
+Generally, the output of K-Means is used in two ways.
+
+To separate your unlabeled data into K groups.
+
+To find and use the cluster’s centers, also called centroids
+
+K-means Concept
+================
+The goal of the k-means algorithm is to find groups in the data, with the number of groups represented by the variable K.
+
+This algorithm is based on the concept that each cluster can be represented by its center.
+
+So to find these clusters, k-means starts by randomly assigning K-centers then tries to attach the nearest points to these centers.
+
+K-means Algorithm
+=================
+Initializes Cluster Centroids.
+
+Assigns data points to the Clusters with the nearest centroid, based on the Euclidean distance.
+
+Updates Cluster centroids: For each cluster, the mean of the values of all the points belonging to it, becomes the new value of the centroid.
+
+Finally, repeat steps 2–3 until the centroids stop updating.
+
+Note here that the name K-means comes from the fact that the mean value becomes the new value of the centroid.
+
+K-means Example
+==================
+from sklearn.cluster import KMeans  #Importing our clustering algorithm: KMeans
+kmeans=KMeans(n_clusters=5, random_state=0)  #Cluster our data by choosing 5 as number of clusters
+kmeans.fit(data)
+
+K-means Labels
+==============
+This instruction enables us to print the label of each point in our data after the clustering is done.
+
+labels=pd.DataFrame(kmeans.labels_)
+labels
+
+K-means Centroids
+==================
+kmeans.predict(data)
+print(kmeans.cluster_centers_)   #Printing the coordinates of cluster centers.
+Each inner list represents the coordinates of a cluster center.
+
+In our example, we have chosen k = 5 then we will have 5 centers.
+
+K-means plot
+=============
+Each colored group represents a cluster.
+
+plt.scatter(data["Annual Income (k$)"][data.label == 0],          
+            data["Spending Score (1-100)"][data.label == 0],s=80,c='magenta',label='Careful')
+plt.scatter(data["Annual Income (k$)"][data.label == 1],
+           data["Spending Score (1-100)"][data.label == 1],s=80,c='yellow',label='Standard')
+plt.scatter(data["Annual Income (k$)"][data.label == 2],
+           data["Spending Score (1-100)"][data.label == 2],s=80,c='green',label='Target')
+plt.scatter(data["Annual Income (k$)"][data.label == 3], 
+           data["Spending Score (1-100)"][data.label == 3],s=80,c='cyan',label='Careless')
+plt.scatter(data["Annual Income (k$)"][data.label == 4], 
+           data["Spending Score (1-100)"][data.label == 4],s=80,c='burlywood',label='Sensible')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='red', label = 'Centroids')
+plt.title('Clusters of Customers')
+plt.xlabel('Annual Income(k$)')
+plt.ylabel('Spending Score(1-100')
+plt.legend()
+plt.show()
+
+Best k value
+=============
+One of the most challenging tasks that we may encounter while using K-means is the choice of the number of clusters.
+
+One of the methods used to determine the best K- value is the Elbow method which is based on the idea that to have a good quality of a cluster:
+
+The observation attached to that cluster must be as close as possible to the cluster center.
+
+We will use SSE, Sum Squared Error, in this method to determine the sum of the squared difference between the cluster center and each observation related to that cluster.
+
+It’s logical then to assume that we will try to minimize SSE.
+
+The Elbow Method
+=================
+The idea of the Elbow method is to run k-means clustering on the dataset for a range of values of k, and for each value of k calculate SSE.
+
+In this example, we have chosen K=3 as the best K-value.
+
+But on what basis was this choice made?
+
+It’s logical then to assume that we will try to minimize SSE.
+
+It’s logical then to assume that we will try to minimize SSE.
+
+The Elbow method: k- value
+===========================
+The optimal number of clusters corresponds to the optimal minimum value of SSE.
+
+Note here that the reason it is named the elbow method is that the optimum minimum value of SSE would represent an elbow joint.
+
+Kmeans is a clustering algorithm.
+
+It functions based on centroids and distances between centroids and data.
+
+Finding the best K value can be challenging sometimes that's why we can use the elbow method.
+
+Unsupervised Association Rules
+===============================
+As we have said previously, unsupervised learning is all about exploring our data:
+
+One of the ways to do that is extracting the rules within the data, this process is called Association Rules.
+
+Association rules are created by searching data for frequent if-then patterns.
+
+Using these rules we can take out valuable information.
+
+The rules within the data can be the type of “what items from a market basket are bought together” or “what videos from a playlist are chosen together”.
+
+
+Recommendation System
+========================
+Association rule is widely used in recommendation systems and market basket analysis:
+
+Recommendation systems: Such as YouTube and Spotify, are applications of association rules.
+
+Using a set of rules, we can figure out which videos or playlists are often chosen together.
+
+Later on we can recommend users new videos based on the rules we created.
+
+Market Basket Analysis
+========================
+Market basket analysis: Supermarkets also use association rules for developing successful marketing strategies.
+
+Let's say we have a list of transactions of different customers, if we know what items are always bought together we can place them next to each other or we can sell them together for a different price.
+
+Apriori Concept
+==================
+Apriori is one of the algorithms that we can use for market basket analysis.
+
+Apriori is based on 3 metrics:
+
+Support
+
+Confidence
+
+Lift
+
+So let’s start by explaining those metrics.
+
+
+. Support
+=================
+Support: quantify how many times an item or an itemset appear in a set of transactions.
+
+In other words, support quantifies the frequency of an itemset.
+
+For example:
+
+How many transactions have apples out of all transactions ?
+
+Support for {apple} = (Transactions Apple)/(Total Transactions)= 4/8 = 0.5
+
+=> 50 % of transactions contain apples.
+
+2. Confidence
+==============
+Confidence: After buying item X what’s the probability of buying item Y.
+
+For example: Out of all transactions that have apple how many have of them have Beer?
+
+Confidencefor{Apple→Beer}=transaction(Apple⋒Beer)transactionApple=34=0.75
+
+=> 75% of the transactions containing apples have a beer
+
+This means that we have a 0.75 chance to buy beer after buying apples.
+
+Note here that ⋒  means "and"
+
+3. Lift
+============
+Lift: What’s the probability of buying items X and Y together rather than just buying item X.
+
+For example:
+
+Lift(Apple → Beer) = Support(Apple and Beer)/(Support (Apple)*Support(Beer))
+
+The lift of {apple->beer} = (3/8)/((4/8)*(6/8))=1
+
+=> It’s more likely to buy X and Y rather than X alone.
+
+Apriori Library
+=================
+To understand the Apriori algorithm we are going to try it out together on a dataset, but first, we have to install the right library:
+Mlxtend is a Python library containing useful tools for the day-to-day data science tasks.
+
+Apriori Preparation
+====================
+In order to use apriori function, we need to transform our dataset into a one-hot encoded dataframe.
+
+Transaction Encoder creates a Numpy array from a List and “One hot” encodes it but in a True/False format and not in 1s and 0s.
+
+import mlxtend
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+te=TransactionEncoder()
+te_ary=te.fit(dataset).transform(dataset)    #Apply one-hot-encoding on our dataset
+df=pd.DataFrame(te_ary, columns=te.columns_)  #Creating a new DataFrame from our Numpy array
+df
+
+Support Code
+=============
+Let’s select itemsets with a minimum of 60% Support
+
+from mlxtend.frequent_patterns import apriori
+apriori(df, min_support=0.6)
+Apriori returns by default the column indice of the item .For example (3) means Eggs.
+Support with column names
+=========================
+frequent_itemsets=apriori(df, min_support=0.6, use_colnames=True) #Instead of column indices we can use column names.
+frequent_itemsets
+
+Confidence Code
+================
+In case we want to extract rules based on other metrics like confidence, we can use association_rules from mlxtend.frequent_patterns library.
+
+from mlxtend.frequent_patterns import association_rules 
+association_rules(frequent_itemsets,metric="confidence",min_threshold=0.7) # associate itemsets with confidence over 70%.
+
+Lift code
+===========
+Associating based on Lift
+
+from mlxtend.frequent_patterns import association_rules 
+association_rules(frequent_itemsets,metric="lift",min_threshold=1.25)
+
+Reinforcement Learning
+========================
+Reinforcement learning is an area of machine learning that helps machines or software called agents to take the best decisions (actions) in a situation to maximize reward:
+
+Let’s say you are playing Mario, your actions are “move left”, “move right”, and “jump“.
+
+Your objective is to reach the end of the map so that’s the maximum reward possible.
+
+Let’s start playing:
+
+Your agent Mario will start trying out actions to get a reward, he will start moving right until he reaches an obstacle.
+
+But when he repeats the whole process he will try a different combination of actions to avoid the obstacle and maximize the reward.
+
+It will keep doing it until he finishes the whole game
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
